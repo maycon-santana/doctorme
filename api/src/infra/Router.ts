@@ -25,9 +25,13 @@ export default class Router {
         this.app.get('/', (req, res) => {
             res.send('Olá mundo');
         });
-
+        this.app.post('/authenticate', this.patientController.authenticate);
+        // Rotas para doctor
         this.app.get('/doctors', this.doctorController.listDoctor);
+        
+        // Rotas para paciente
         this.app.post('/patient', this.patientController.createPatient);
+        this.app.post('/patient/:patientId/appointment', this.patientController.createAppointment);
     }
 
     public start(port: number) {

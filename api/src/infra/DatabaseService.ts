@@ -3,9 +3,19 @@ import { PrismaClient } from "@prisma/client";
 export default class DatabaseService {
     constructor(readonly connection: PrismaClient) {}
 
+    getUserByPhone(phone: string) {
+        return this.connection.user.findUnique({
+            where: { phone },
+        });
+    }
+
     listDoctor() {
 
-        return this.connection.doctor.findMany();
+        return this.connection.doctor.findMany({
+            include: {
+                agenda: true,
+            }
+        });
     }
 
     getDoctorById(id: number, includeAgenda: boolean = false) {
@@ -39,6 +49,36 @@ export default class DatabaseService {
                 name,
                 phone,
                 userId,
+            },
+        });
+    }
+
+    getPatientById(id: number) {
+        return this.connection.patient.findUnique({
+            where: { id },
+        });
+    }
+
+    getAgendaById(id: number) {
+        return this.connection.agenda.findUnique({
+            where: { id },
+        });
+    }
+
+    updateAgenda(id: number, data: { available: boolean }) {
+        return this.connection.agenda.update({
+            where: { id },
+            data,
+        });
+    }
+
+    // criar agendamento
+    createAppointment(patientId: number, doctorId: number, date: Date) {
+        return this.connection.appointment.create({
+            data: {
+                patientId,
+                doctorId,
+                date,
             },
         });
     }
